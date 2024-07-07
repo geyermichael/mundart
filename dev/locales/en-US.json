@@ -1,0 +1,15 @@
+{
+  "hello": "hello world",
+  "language": {
+    "german": "german",
+    "english": "english"
+  },
+  "test": "test",
+  "nested": {
+    "key": {
+      "deep": {
+        "inside": "deep inside"
+      }
+    }
+  }
+}

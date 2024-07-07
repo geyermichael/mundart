@@ -1,0 +1,36 @@
+{
+  "generateBy": "i18n-editor",
+  "generateAt": "2024-07-07T11:43:29.753Z",
+  "foundLocales": [
+    "de-DE",
+    "de",
+    "en-US",
+    "fr"
+  ],
+  "languages": {
+    "de": {
+      "name": "German",
+      "language_code": "de",
+      "country_code": "DE",
+      "default": false
+    },
+    "fr": {
+      "name": "French",
+      "language_code": "fr",
+      "country_code": "FR",
+      "default": false
+    },
+    "en-US": {
+      "name": "",
+      "language_code": "en",
+      "country_code": "US",
+      "default": false
+    },
+    "de-DE": {
+      "name": "",
+      "language_code": "de",
+      "country_code": "DE",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "generateBy": "i18n-editor",
+  "generateAt": "2024-07-07T11:44:36.663Z",
+  "foundLocales": ["de", "en"],
+  "languages": {
+    "de": {
+      "name": "",
+      "language_code": "de",
+      "country_code": "",
+      "default": false
+    },
+    "en": {
+      "name": "",
+      "language_code": "en",
+      "country_code": "",
+      "default": true
+    }
+  }
+}

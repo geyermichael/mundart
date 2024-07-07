@@ -1,0 +1,19 @@
+{
+  "name": "i18n-editor",
+  "version": "0.0.1",
+  "description": "Simple generic i18n web editor",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "playground": "NODE_ENV=development pnpm build && cd playground && pnpm run i18n-editor"
+  },
+  "dependencies": {
+    "@nuxt/ui": "2.17.0",
+    "nuxt": "3.12.3"
+  }
+}
