@@ -42,7 +42,7 @@ function generatePackageJson() {
     version,
     description,
     main: "server/index.mjs",
-    keywords: ["nuxt", "i18n", "editor"],
+    keywords: ["i18n", "editor", "internationalization", "localization"],
   };
 
   fs.writeFileSync(

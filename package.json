@@ -1,7 +1,7 @@
 {
-  "name": "i18n-editor",
+  "name": "mundart",
   "version": "0.0.1",
-  "description": "Simple generic i18n web editor",
+  "description": "Simple i18n web editor for developers",
   "private": true,
   "type": "module",
   "scripts": {
