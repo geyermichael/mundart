@@ -19,7 +19,7 @@ export default defineNuxtConfig({
     output: {
       dir:
         process.env.NODE_ENV === "development"
-          ? "playground/node_modules/i18n-editor"
+          ? "playground/node_modules/mundart"
           : "dist",
     },
     hooks: {

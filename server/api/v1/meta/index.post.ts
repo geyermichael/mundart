@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
     fs.writeFileSync(
       `${process.cwd()}/${config.localeDirPath}/.meta.json`,
       JSON.stringify({
-        generateBy: "i18n-editor",
+        generateBy: "mundart",
         generateAt: new Date().toISOString(),
         foundLocales: locales,
         languages: createMetaData(locales),

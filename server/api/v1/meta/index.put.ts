@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
         : body.language_code;
 
       writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
-        generateBy: "i18n-editor",
+        generateBy: "mundart",
         generateAt: new Date().toISOString(),
         foundLocales: locales,
         languages: {
@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
     }
 
     writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
-      generateBy: "i18n-editor",
+      generateBy: "mundart",
       generateAt: new Date().toISOString(),
       foundLocales: locales,
       languages: currentMeta.languages,
