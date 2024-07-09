@@ -1,14 +1,14 @@
-import fs from "fs";
-import { name, version, description } from "./package.json";
+import fs from 'fs';
+import { name, version, description } from './package.json';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: "2024-04-03",
+  compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
 
   runtimeConfig: {
     localeDirPath:
-      process.env.NODE_ENV === "development" ? "dev/locales" : "src/locales",
+      process.env.NODE_ENV === 'development' ? 'dev/locales' : 'src/locales',
   },
 
   future: {
@@ -18,9 +18,9 @@ export default defineNuxtConfig({
   nitro: {
     output: {
       dir:
-        process.env.NODE_ENV === "development"
-          ? "playground/node_modules/mundart"
-          : "dist",
+        process.env.NODE_ENV === 'development'
+          ? 'playground/node_modules/mundart'
+          : 'dist',
     },
     hooks: {
       close: () => {
@@ -29,10 +29,10 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ["@nuxt/ui"],
+  modules: ['@nuxt/ui', '@nuxt/eslint'],
 
   colorMode: {
-    preference: "light",
+    preference: 'light',
   },
 });
 
@@ -41,8 +41,8 @@ function generatePackageJson() {
     name,
     version,
     description,
-    main: "server/index.mjs",
-    keywords: ["i18n", "editor", "internationalization", "localization"],
+    main: 'server/index.mjs',
+    keywords: ['i18n', 'editor', 'internationalization', 'localization'],
   };
 
   fs.writeFileSync(
@@ -50,5 +50,5 @@ function generatePackageJson() {
     JSON.stringify(packageJson, null, 2)
   );
 
-  console.log("Generated package.json");
+  console.log('Generated package.json');
 }

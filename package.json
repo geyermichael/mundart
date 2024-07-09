@@ -13,6 +13,7 @@
     "playground": "NODE_ENV=development pnpm build && cd playground && pnpm run mundart"
   },
   "dependencies": {
+    "@nuxt/eslint": "0.3.13",
     "@nuxt/ui": "2.17.0",
     "nuxt": "3.12.3"
   }
