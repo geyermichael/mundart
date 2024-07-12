@@ -1,55 +1,50 @@
 <template>
-  <div class="flex justify-center mb-4">
-    <div class="text-xl">Languages</div>
-    <UButton @click="isOpen = true" label="Add new" class="ml-auto" />
+  <div>
+    <div class="flex justify-center mb-4">
+      <div class="text-xl">Languages</div>
+      <UButton label="Add new" class="ml-auto" @click="isOpen = true" />
 
-    <UModal v-model="isOpen">
-      <div class="p-4">
-        <UForm :state="state" class="space-y-4" @submit="onSubmit">
-          <UFormGroup class="py-2" label="Name">
-            <UInput v-model="state.name" placeholder="Germany" />
-          </UFormGroup>
-          <UFormGroup class="py-2" label="Country Code">
-            <UInput v-model="state.country_code" placeholder="DE" />
-          </UFormGroup>
-          <UFormGroup class="py-2" label="Language Code">
-            <UInput v-model="state.language_code" placeholder="de" required />
-          </UFormGroup>
-          <UFormGroup label="Default">
-            <UCheckbox
-              v-model="state.default"
-              :disabled="hasAlredyDefaultLocale"
-            />
-          </UFormGroup>
+      <UModal v-model="isOpen">
+        <div class="p-4">
+          <UForm :state="state" class="space-y-4" @submit="onSubmit">
+            <UFormGroup class="py-2" label="Name">
+              <UInput v-model="state.name" placeholder="Germany" />
+            </UFormGroup>
+            <UFormGroup class="py-2" label="Country Code">
+              <UInput v-model="state.country_code" placeholder="DE" />
+            </UFormGroup>
+            <UFormGroup class="py-2" label="Language Code">
+              <UInput v-model="state.language_code" placeholder="de" required />
+            </UFormGroup>
+            <UFormGroup label="Default">
+              <UCheckbox v-model="state.default" :disabled="hasAlredyDefaultLocale" />
+            </UFormGroup>
 
-          <UButton label="Add" class="mt-4" type="submit" />
-        </UForm>
-      </div>
-    </UModal>
+            <UButton label="Add" class="mt-4" type="submit" />
+          </UForm>
+        </div>
+      </UModal>
+    </div>
+
+    <UTable :rows="languages" :columns="columns">
+      <template #empty-state>
+        <div class="flex flex-col items-center justify-center py-6 gap-3">
+          <span class="italic text-sm">No one here!</span>
+          <UButton label="Add people" />
+        </div>
+      </template>
+
+      <template #actions-data="{ row }">
+        <UDropdown :items="items(row)">
+          <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+        </UDropdown>
+      </template>
+    </UTable>
   </div>
-
-  <UTable :rows="languages" :columns="columns">
-    <template #empty-state>
-      <div class="flex flex-col items-center justify-center py-6 gap-3">
-        <span class="italic text-sm">No one here!</span>
-        <UButton label="Add people" />
-      </div>
-    </template>
-
-    <template #actions-data="{ row }">
-      <UDropdown :items="items(row)">
-        <UButton
-          color="gray"
-          variant="ghost"
-          icon="i-heroicons-ellipsis-horizontal-20-solid"
-        />
-      </UDropdown>
-    </template>
-  </UTable>
 </template>
 
 <script setup lang="ts">
-const { data, refresh } = await useFetch<any>("/api/v1/meta");
+const { data, refresh } = await useFetch("/api/v1/meta");
 const toast = useToast();
 
 const isOpen = ref(false);
@@ -77,6 +72,7 @@ const columns = [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const items = (row: any) => [
   [
     {
@@ -106,6 +102,7 @@ const languages: {
 
 watchEffect(() => {
   languages.splice(0, languages.length); // Clear the array
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Object.values(data.value.languages).forEach((lang: any) => {
     languages.push({
       country_code: lang.country_code ?? "-",
@@ -127,7 +124,7 @@ const state = reactive({
   default: false,
 });
 
-const onSubmit = async (event: any) => {
+const onSubmit = async () => {
   await $fetch("/api/v1/locale", {
     method: "POST",
     body: JSON.stringify(state),
