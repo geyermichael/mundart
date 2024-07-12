@@ -25,13 +25,14 @@
         </div>
         <div>
           <UContainer v-for="message in messages" :key="message" class="py-4">
+            {{ message }}
             <UForm :state="message" @submit="onSubmit">
               <div class="flex justify-between items-end mb-2">
                 <div>
                   {{ message.message ? message.locale : message.locale + '❗️' }}
                 </div>
 
-                <UButton label="Save" type="submit" />
+                <UButton label="Save" type="submit" variant="ghost" />
               </div>
 
               <UFormGroup>
@@ -46,7 +47,7 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useFetch('/api/v1/keys');
+const { data, refresh } = await useFetch('/api/v1/keys');
 
 const choosenKey = ref('');
 
@@ -74,7 +75,6 @@ const filteredRows = computed(() => {
 const messages = ref<{ locale: string; message: string }[]>();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const showContent = async (key: any) => {
-  console.log(key);
   choosenKey.value = key;
 
   const response = await $fetch(`/api/v1/messages/${key}`);
@@ -83,10 +83,15 @@ const showContent = async (key: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSubmit = async (event: any) => {
-  console.log(event.data);
   await $fetch(`/api/v1/messages/${choosenKey.value}`, {
     method: 'PUT',
-    body: JSON.stringify(event.data),
+    body: JSON.stringify({
+      locale: event.data.locale,
+      message: event.data.message.trim(),
+    }),
   });
+
+  await refresh();
+  showContent(choosenKey.value);
 };
 </script>

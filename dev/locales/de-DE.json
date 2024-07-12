@@ -4,7 +4,7 @@
     "description": "This is the 404 page."
   },
   "500": {
-    "title": "600",
+    "title": "",
     "description": "This is the 500 page."
   },
   "general": {
