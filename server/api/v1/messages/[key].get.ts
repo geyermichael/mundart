@@ -11,8 +11,6 @@ export default defineEventHandler(async (event) => {
     messages.push({ locale: loc, message: getValueAtPath(fileContent, key) });
   }
 
-  console.log();
-
   return {
     key,
     messages,

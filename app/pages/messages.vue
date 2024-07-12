@@ -25,13 +25,13 @@
         </div>
         <div>
           <UContainer v-for="message in messages" :key="message" class="py-4">
-            <UForm :state="message">
+            <UForm :state="message" @submit="onSubmit">
               <div class="flex justify-between items-end mb-2">
                 <div>
                   {{ message.message ? message.locale : message.locale + '❗️' }}
                 </div>
 
-                <UButton disabled label="Save" type="submit" />
+                <UButton label="Save" type="submit" />
               </div>
 
               <UFormGroup>
@@ -79,5 +79,14 @@ const showContent = async (key: any) => {
 
   const response = await $fetch(`/api/v1/messages/${key}`);
   messages.value = response.messages;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const onSubmit = async (event: any) => {
+  console.log(event.data);
+  await $fetch(`/api/v1/messages/${choosenKey.value}`, {
+    method: 'PUT',
+    body: JSON.stringify(event.data),
+  });
 };
 </script>

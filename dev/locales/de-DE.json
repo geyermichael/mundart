@@ -1,4 +1,12 @@
 {
+  "404": {
+    "title": "Das ist die 404 Seite.",
+    "description": "This is the 404 page."
+  },
+  "500": {
+    "title": "600",
+    "description": "This is the 500 page."
+  },
   "general": {
     "hello": "Hallo, Welt!",
     "welcome": "Welcome to our website!",
@@ -15,14 +23,6 @@
   "contact": {
     "title": "Contact",
     "description": "This is the contact page."
-  },
-  "404": {
-    "title": "404",
-    "description": "This is the 404 page."
-  },
-  "500": {
-    "title": "500",
-    "description": "This is the 500 page."
   },
   "error": {
     "title": "Error",

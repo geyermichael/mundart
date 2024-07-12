@@ -1,4 +1,8 @@
 {
+  "404": {
+    "title": "This is the 404 page.",
+    "description": "This is the 404 page."
+  },
   "general": {
     "hello": "Hello, World!",
     "welcome": "Welcome to our website!",
@@ -15,9 +19,5 @@
   "contact": {
     "title": "Contact",
     "description": "This is the contact page."
-  },
-  "404": {
-    "title": "404",
-    "description": "This is the 404 page."
   }
 }
