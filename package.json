@@ -4,6 +4,21 @@
   "description": "Simple i18n web editor for developers",
   "private": true,
   "type": "module",
+  "keywords": [
+    "i18n",
+    "editor",
+    "internationalization",
+    "localization"
+  ],
+  "author": {
+    "name": "Michael Geyer",
+    "email": "michael@qbitone.de"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/geyermichael/mundart"
+  },
+  "license": "MIT",
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",

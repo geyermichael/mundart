@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { name, version, description } from './package.json';
+import { name, version, description, author, license, repository, keywords } from './package.json';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -38,7 +38,10 @@ function generatePackageJson() {
     version,
     description,
     main: 'server/index.mjs',
-    keywords: ['i18n', 'editor', 'internationalization', 'localization'],
+    keywords,
+    author,
+    repository,
+    license,
   };
 
   fs.writeFileSync(`${process.cwd()}/dist/package.json`, JSON.stringify(packageJson, null, 2));
