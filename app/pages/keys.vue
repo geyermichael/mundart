@@ -1,46 +1,50 @@
 <template>
-  <div class="flex justify-center mb-4">
-    <div class="text-xl">Keys</div>
-    <UButton @click="isOpen = true" label="Add new" class="ml-auto" disabled />
+  <div>
+    <div class="flex justify-center mb-4">
+      <div class="text-xl">Keys</div>
+      <UButton label="Add new" class="ml-auto" disabled @click="isOpen = true" />
 
-    <UModal v-model="isOpen">
-      <div class="p-4">
-        <UForm :state="state" class="space-y-4" @submit="onSubmit">
-          <UFormGroup class="py-2" label="Key">
-            <UInput v-model="state.key" placeholder="foo.bar" />
-          </UFormGroup>
+      <UModal v-model="isOpen">
+        <div class="p-4">
+          <UForm :state="state" class="space-y-4" @submit="onSubmit">
+            <UFormGroup class="py-2" label="Key">
+              <UInput v-model="state.key" placeholder="foo.bar" />
+            </UFormGroup>
 
-          <UButton label="Add" class="mt-4" type="submit" />
-        </UForm>
+            <UButton label="Add" class="mt-4" type="submit" />
+          </UForm>
+        </div>
+      </UModal>
+    </div>
+
+
+    <div v-if="data?.defaultLanguage">
+
+      <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
+        <UInput v-model="q" placeholder="Search for keys..." />
       </div>
-    </UModal>
-  </div>
 
-  <UTable v-if="data?.defaultLanguage" :rows="keys" :columns="columns">
-    <template #empty-state>
-      <div class="flex flex-col items-center justify-center py-6 gap-3">
-        <span class="italic text-sm">No keys found!</span>
+      <UTable :rows="rows" :columns="columns">
+        <template #empty-state>
+          <div class="flex flex-col items-center justify-center py-6 gap-3">
+            <span class="italic text-sm">No keys found!</span>
+          </div>
+        </template>
+
+        <template #actions-data="{ row }">
+          <UDropdown :items="items(row)">
+            <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+          </UDropdown>
+        </template>
+      </UTable>
+      <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+        <UPagination v-model="page" :page-count="pageCount" :total="keys.length" />
       </div>
-    </template>
-
-    <template #actions-data="{ row }">
-      <UDropdown :items="items(row)">
-        <UButton
-          color="gray"
-          variant="ghost"
-          icon="i-heroicons-ellipsis-horizontal-20-solid"
-        />
-      </UDropdown>
-    </template>
-  </UTable>
-  <div v-else>
-    <UAlert
-      icon="i-heroicons-information-circle"
-      color="yellow"
-      variant="solid"
-      title="No default language found!"
-      description="You need to set a default language in the '.meta.json' file to be able to manage keys."
-    />
+    </div>
+    <div v-else>
+      <UAlert variant="solid" title="No default language found!" color="yellow" icon="i-heroicons-information-circle"
+        description="You need to set a default language in the '.meta.json' file to be able to manage keys." />
+    </div>
   </div>
 </template>
 
@@ -52,6 +56,19 @@ const state = reactive({
   key: "",
 });
 
+const page = ref(1)
+const pageCount = 10
+
+const rows = computed(() => {
+  if (q.value) {
+    return filteredRows.value.slice((page.value - 1) * pageCount, (page.value) * pageCount)
+  } else {
+    return keys.slice((page.value - 1) * pageCount, (page.value) * pageCount)
+  }
+})
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const items = (row: any) => [
   [
     {
@@ -75,11 +92,26 @@ const items = (row: any) => [
 const columns: {
   key: string;
   label: string;
+  sortable?: boolean;
 }[] = reactive([]);
 
 const keys: {
   key: string;
 }[] = reactive([]);
+
+const q = ref('')
+
+const filteredRows = computed(() => {
+  if (!q.value) {
+    return keys
+  }
+
+  return keys.filter((key) => {
+    return Object.values(key).some((value) => {
+      return String(value).toLowerCase().includes(q.value.toLowerCase())
+    })
+  })
+})
 
 watchEffect(() => {
   if (!data.value?.defaultLanguage) return;
@@ -115,6 +147,7 @@ watchEffect(() => {
     {
       key: "key",
       label: "Key",
+      sortable: true,
     },
     ...languageCols!,
     {
@@ -127,7 +160,7 @@ watchEffect(() => {
   const setLanguageColumnValues = (key: string) => {
     // set all languages to have a be present as default
     const res = data.value?.languages.reduce(
-      // @ts-ignore
+      // @ts-expect-error - TS complains about the return type
       (acc, curr) => ((acc[curr] = "✅"), acc),
       {}
     );
@@ -135,7 +168,7 @@ watchEffect(() => {
     // set missing keys to have a warning icon
     data.value?.missingKeys.forEach((item) => {
       if (item.key === key) {
-        // @ts-ignore
+        // @ts-expect-error - TS complains about the return type
         res[item.language] = "❗️";
       }
     });
@@ -152,6 +185,7 @@ watchEffect(() => {
   });
 });
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSubmit = async (event: any) => {
   console.log(event.data);
 };
