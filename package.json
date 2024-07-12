@@ -10,7 +10,7 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "playground": "NODE_ENV=development pnpm build && cd playground && pnpm run mundart"
+    "playground": "PLAYGROUND=true pnpm build && cd playground && NUXT_LOCALE_DIR_PATH=src/i18n pnpm run mundart"
   },
   "dependencies": {
     "@nuxt/eslint": "0.3.13",

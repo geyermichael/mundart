@@ -7,8 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
-    localeDirPath:
-      process.env.NODE_ENV === 'development' ? 'dev/locales' : 'src/locales',
+    localeDirPath: process.env.NODE_ENV === 'development' ? 'dev/locales' : 'src/locales',
   },
 
   future: {
@@ -17,10 +16,7 @@ export default defineNuxtConfig({
 
   nitro: {
     output: {
-      dir:
-        process.env.NODE_ENV === 'development'
-          ? 'playground/node_modules/mundart'
-          : 'dist',
+      dir: process.env.PLAYGROUND === 'true' ? 'playground/node_modules/mundart' : 'dist',
     },
     hooks: {
       close: () => {
@@ -45,10 +41,7 @@ function generatePackageJson() {
     keywords: ['i18n', 'editor', 'internationalization', 'localization'],
   };
 
-  fs.writeFileSync(
-    `${process.cwd()}/dist/package.json`,
-    JSON.stringify(packageJson, null, 2)
-  );
+  fs.writeFileSync(`${process.cwd()}/dist/package.json`, JSON.stringify(packageJson, null, 2));
 
   console.log('Generated package.json');
 }
