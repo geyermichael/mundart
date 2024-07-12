@@ -1,15 +1,23 @@
 {
-  "hello": "hello world",
-  "language": {
-    "german": "german",
-    "english": "english"
+  "general": {
+    "hello": "Hello, World!",
+    "welcome": "Welcome to our website!",
+    "goodbye": "Goodbye, World!"
   },
-  "test": "test",
-  "nested": {
-    "key": {
-      "deep": {
-        "inside": "deep inside"
-      }
-    }
+  "home": {
+    "title": "Home",
+    "description": "This is the home page."
+  },
+  "about": {
+    "title": "About",
+    "description": "This is the about page."
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "This is the contact page."
+  },
+  "404": {
+    "title": "404",
+    "description": "This is the 404 page."
   }
 }
