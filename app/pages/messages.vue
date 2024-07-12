@@ -6,36 +6,65 @@
     <div class="flex flex-col grid grid-cols-10 gap-8">
       <div class="col-span-3">
         <div class="px-3 border-r">
-          <UInput v-model="q" placeholder="Search for keys..." />
+          <UInput
+            v-model="q"
+            placeholder="Search for keys..."
+          />
         </div>
-        <UTable :rows="filteredRows" :columns="[{ key: 'key', label: '' }]"
-          class="border-r max-h-[80vh] overflow-hidden overflow-y-scroll">
+        <UTable
+          :rows="filteredRows"
+          :columns="[{ key: 'key', label: '' }]"
+          class="border-r max-h-[80vh] overflow-hidden overflow-y-scroll"
+        >
           <template #key-data="{ row }">
-            <div class="flex items-center" :class="choosenKey === row.key ? 'font-bold' : ''">
-              <span class="text-sm hover:cursor-pointer" @click="showContent(row.key)">
+            <div
+              class="flex items-center"
+              :class="choosenKey === row.key ? 'font-bold' : ''"
+            >
+              <span
+                class="text-sm hover:cursor-pointer"
+                @click="showContent(row.key)"
+              >
                 {{ row.key }}
               </span>
             </div>
           </template>
         </UTable>
       </div>
-      <div v-if="choosenKey" class="col-span-6">
+      <div
+        v-if="choosenKey"
+        class="col-span-6"
+      >
         <div class="font-bold">
           {{ choosenKey }}
         </div>
         <div>
-          <UContainer v-for="message in messages" :key="message" class="py-4">
-            <UForm :state="message" @submit="onSubmit">
+          <UContainer
+            v-for="message in messages"
+            :key="message"
+            class="py-4"
+          >
+            <UForm
+              :state="message"
+              @submit="onSubmit"
+            >
               <div class="flex justify-between items-end mb-2">
                 <div>
                   {{ message.message ? message.locale : message.locale + '❗️' }}
                 </div>
 
-                <UButton label="Save" type="submit" variant="ghost" />
+                <UButton
+                  label="Save"
+                  type="submit"
+                  variant="ghost"
+                />
               </div>
 
               <UFormGroup>
-                <UTextarea v-model="message.message" placeholder="missing message" />
+                <UTextarea
+                  v-model="message.message"
+                  placeholder="missing message"
+                />
               </UFormGroup>
             </UForm>
           </UContainer>
@@ -76,7 +105,7 @@ const messages = ref<{ locale: string; message: string }[]>();
 const showContent = async (key: any) => {
   choosenKey.value = key;
 
-  const response = await $fetch(`/api/v1/messages/${key}`) as { messages: { locale: string; message: string }[] }
+  const response = (await $fetch(`/api/v1/messages/${key}`)) as { messages: { locale: string; message: string }[] };
   messages.value = response.messages;
 };
 

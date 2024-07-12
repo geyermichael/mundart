@@ -3,24 +3,22 @@ export default defineEventHandler(async (event) => {
   const body = await readBody(event);
   const { locales } = getLocales();
 
-  let currentMeta = await $fetch("/api/v1/meta", {
-    method: "GET",
+  let currentMeta = await $fetch('/api/v1/meta', {
+    method: 'GET',
   });
 
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === 'development') {
     // check if request coming from "init-state" event, body should have "generateBy" key as it the current meta data
-    if (Object.keys(body).includes("generateBy")) {
+    if (Object.keys(body).includes('generateBy')) {
       handleFoundLocalesAndMetaLanguageMismatch();
     } else {
       // if (JSON.stringify(body.foundLocales) === JSON.stringify(locales)) {
       //   return setResponseStatus(event, 304);
       // } else {
-      const languageFileName = body.country_code
-        ? `${body.language_code}-${body.country_code}`
-        : body.language_code;
+      const languageFileName = body.country_code ? `${body.language_code}-${body.country_code}` : body.language_code;
 
       writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
-        generateBy: "mundart",
+        generateBy: 'mundart',
         generateAt: new Date().toISOString(),
         foundLocales: locales,
         languages: {
@@ -50,7 +48,7 @@ export default defineEventHandler(async (event) => {
      * handle missing locale files
      */
     const missingLocaleFiles = Object.keys(currentMeta.languages).filter(
-      (loc: any) => !currentMeta.foundLocales.includes(loc)
+      (loc: any) => !currentMeta.foundLocales.includes(loc),
     );
 
     for (const loc of missingLocaleFiles) {
@@ -60,21 +58,19 @@ export default defineEventHandler(async (event) => {
     /**
      * handle missing languages in .meta.json file
      */
-    const missingLanguageMeta = locales.filter(
-      (loc: any) => !Object.keys(currentMeta.languages).includes(loc)
-    );
+    const missingLanguageMeta = locales.filter((loc: any) => !Object.keys(currentMeta.languages).includes(loc));
 
     for (const lang of missingLanguageMeta) {
       currentMeta.languages[lang] = {
-        name: "",
-        language_code: lang.split("-")[0],
-        country_code: lang.split("-")[1] || "",
+        name: '',
+        language_code: lang.split('-')[0],
+        country_code: lang.split('-')[1] || '',
         default: false,
       };
     }
 
     writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
-      generateBy: "mundart",
+      generateBy: 'mundart',
       generateAt: new Date().toISOString(),
       foundLocales: locales,
       languages: currentMeta.languages,

@@ -2,31 +2,68 @@
   <div>
     <div class="flex justify-center mb-4">
       <div class="text-xl">Languages</div>
-      <UButton label="Add new" class="ml-auto" @click="isOpen = true" />
+      <UButton
+        label="Add new"
+        class="ml-auto"
+        @click="isOpen = true"
+      />
 
       <UModal v-model="isOpen">
         <div class="p-4">
-          <UForm :state="state" class="space-y-4" @submit="onSubmit">
-            <UFormGroup class="py-2" label="Name">
-              <UInput v-model="state.name" placeholder="Germany" />
+          <UForm
+            :state="state"
+            class="space-y-4"
+            @submit="onSubmit"
+          >
+            <UFormGroup
+              class="py-2"
+              label="Name"
+            >
+              <UInput
+                v-model="state.name"
+                placeholder="Germany"
+              />
             </UFormGroup>
-            <UFormGroup class="py-2" label="Country Code">
-              <UInput v-model="state.country_code" placeholder="DE" />
+            <UFormGroup
+              class="py-2"
+              label="Country Code"
+            >
+              <UInput
+                v-model="state.country_code"
+                placeholder="DE"
+              />
             </UFormGroup>
-            <UFormGroup class="py-2" label="Language Code">
-              <UInput v-model="state.language_code" placeholder="de" required />
+            <UFormGroup
+              class="py-2"
+              label="Language Code"
+            >
+              <UInput
+                v-model="state.language_code"
+                placeholder="de"
+                required
+              />
             </UFormGroup>
             <UFormGroup label="Default">
-              <UCheckbox v-model="state.default" :disabled="hasAlredyDefaultLocale" />
+              <UCheckbox
+                v-model="state.default"
+                :disabled="hasAlredyDefaultLocale"
+              />
             </UFormGroup>
 
-            <UButton label="Add" class="mt-4" type="submit" />
+            <UButton
+              label="Add"
+              class="mt-4"
+              type="submit"
+            />
           </UForm>
         </div>
       </UModal>
     </div>
 
-    <UTable :rows="languages" :columns="columns">
+    <UTable
+      :rows="languages"
+      :columns="columns"
+    >
       <template #empty-state>
         <div class="flex flex-col items-center justify-center py-6 gap-3">
           <span class="italic text-sm">No one here!</span>
@@ -36,7 +73,11 @@
 
       <template #actions-data="{ row }">
         <UDropdown :items="items(row)">
-          <UButton color="gray" variant="ghost" icon="i-heroicons-ellipsis-horizontal-20-solid" />
+          <UButton
+            color="gray"
+            variant="ghost"
+            icon="i-heroicons-ellipsis-horizontal-20-solid"
+          />
         </UDropdown>
       </template>
     </UTable>
@@ -44,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-const { data, refresh } = await useFetch("/api/v1/meta");
+const { data, refresh } = await useFetch('/api/v1/meta');
 const toast = useToast();
 
 const isOpen = ref(false);
@@ -52,23 +93,23 @@ const hasAlredyDefaultLocale = ref(false);
 
 const columns = [
   {
-    key: "country_code",
-    label: "Country code",
+    key: 'country_code',
+    label: 'Country code',
   },
   {
-    key: "language_code",
-    label: "Language code",
+    key: 'language_code',
+    label: 'Language code',
   },
   {
-    key: "name",
-    label: "Name",
+    key: 'name',
+    label: 'Name',
   },
   {
-    key: "default",
-    label: "Default",
+    key: 'default',
+    label: 'Default',
   },
   {
-    key: "actions",
+    key: 'actions',
   },
 ];
 
@@ -76,19 +117,19 @@ const columns = [
 const items = (row: any) => [
   [
     {
-      label: "Edit",
-      icon: "i-heroicons-pencil-square-20-solid",
-      click: () => console.log("Edit", row.id),
+      label: 'Edit',
+      icon: 'i-heroicons-pencil-square-20-solid',
+      click: () => console.log('Edit', row.id),
     },
     {
-      label: "Duplicate",
-      icon: "i-heroicons-document-duplicate-20-solid",
+      label: 'Duplicate',
+      icon: 'i-heroicons-document-duplicate-20-solid',
     },
   ],
   [
     {
-      label: "Delete",
-      icon: "i-heroicons-trash-20-solid",
+      label: 'Delete',
+      icon: 'i-heroicons-trash-20-solid',
     },
   ],
 ];
@@ -97,7 +138,7 @@ const languages: {
   country_code: string;
   language_code: string;
   name: string;
-  default: "Yes" | "";
+  default: 'Yes' | '';
 }[] = reactive([]);
 
 watchEffect(() => {
@@ -105,10 +146,10 @@ watchEffect(() => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Object.values(data.value.languages).forEach((lang: any) => {
     languages.push({
-      country_code: lang.country_code ?? "-",
+      country_code: lang.country_code ?? '-',
       language_code: lang.language_code,
-      name: lang.name ?? "-",
-      default: lang.default ? "Yes" : "",
+      name: lang.name ?? '-',
+      default: lang.default ? 'Yes' : '',
     });
 
     if (lang.default) {
@@ -118,20 +159,20 @@ watchEffect(() => {
 });
 
 const state = reactive({
-  name: "",
-  country_code: "",
-  language_code: "",
+  name: '',
+  country_code: '',
+  language_code: '',
   default: false,
 });
 
 const onSubmit = async () => {
-  await $fetch("/api/v1/locale", {
-    method: "POST",
+  await $fetch('/api/v1/locale', {
+    method: 'POST',
     body: JSON.stringify(state),
   });
 
   isOpen.value = false;
-  toast.add({ title: "Language added!" });
+  toast.add({ title: 'Language added!' });
   await refresh();
 };
 </script>

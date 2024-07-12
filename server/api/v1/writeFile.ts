@@ -1,20 +1,20 @@
-import fs from "fs";
-import { getLocales } from "../../utils/get-locales";
+import fs from 'fs';
+import { getLocales } from '../../utils/get-locales';
 
 export default defineEventHandler(async () => {
   const config = useRuntimeConfig();
   const { hasMeta, locales } = getLocales();
 
   if (!hasMeta) {
-    console.error("No meta file found");
+    console.error('No meta file found');
     fs.writeFileSync(
       `${process.cwd()}/${config.localeDirPath}/.meta.json`,
       JSON.stringify({
-        generateBy: "mundart",
+        generateBy: 'mundart',
         generateAt: new Date().toISOString(),
         foundLocales: locales,
         meta: createMetaData(locales),
-      })
+      }),
     );
   }
 });

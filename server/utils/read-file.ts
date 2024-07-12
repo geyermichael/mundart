@@ -1,10 +1,10 @@
-import fs from "fs";
+import fs from 'fs';
 
 export function readFile(filePath: string) {
   try {
-    const fileContent = fs.readFileSync(filePath, "utf-8");
+    const fileContent = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(fileContent);
   } catch (error) {
-    console.error("Error reading file:", error);
+    console.error('Error reading file:', error);
   }
 }
