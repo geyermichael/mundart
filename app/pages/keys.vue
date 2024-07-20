@@ -36,7 +36,7 @@
       </UModal>
     </div>
 
-    <div v-if="data?.defaultLanguage">
+    <div v-if="data?.defaultLocale">
       <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
         <UInput
           v-model="q"
@@ -73,13 +73,7 @@
       </div>
     </div>
     <div v-else>
-      <UAlert
-        variant="solid"
-        title="No default language found!"
-        color="yellow"
-        icon="i-heroicons-information-circle"
-        description="You need to set a default language in the '.meta.json' file to be able to manage keys."
-      />
+      <NoDefaulLocale />
     </div>
   </div>
 </template>
@@ -182,7 +176,7 @@ watchEffect(() => {
     {
       key: 'actions',
       label: '',
-    },
+    }
   );
 
   // set languages columns values to indicate if the key is missing or not
@@ -191,7 +185,7 @@ watchEffect(() => {
     const res = data.value?.languages.reduce(
       // @ts-expect-error - TS complains about the return type
       (acc, curr) => ((acc[curr] = '✅'), acc),
-      {},
+      {}
     );
 
     // set missing keys to have a warning icon

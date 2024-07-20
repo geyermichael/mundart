@@ -3,7 +3,10 @@
     <div class="flex mb-4">
       <div class="text-xl">Messages</div>
     </div>
-    <div class="flex flex-col grid grid-cols-10 gap-8">
+    <div
+      v-if="data?.defaultLocale"
+      class="flex flex-col grid grid-cols-10 gap-8"
+    >
       <div class="col-span-3">
         <div class="px-3 border-r">
           <UInput
@@ -70,6 +73,9 @@
           </UContainer>
         </div>
       </div>
+    </div>
+    <div v-else>
+      <NoDefaulLocale />
     </div>
   </div>
 </template>

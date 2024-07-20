@@ -3,11 +3,7 @@ export default defineEventHandler(async () => {
 
   const jsonObject = new Set();
 
-  const { locales } = getLocales();
-
-  const meta = (await $fetch('/api/v1/meta', {
-    method: 'GET',
-  })) as any;
+  const { locales, defaultLocale } = getLocales();
 
   for (const loc of locales) {
     const fileContent = readFile(`${process.cwd()}/${config.localeDirPath}/${loc}.json`);
@@ -21,12 +17,7 @@ export default defineEventHandler(async () => {
 
   const languages = data.map((m) => m.locale);
 
-  // find default language in meta.languages
-  const usedLanguages = Object.keys(meta.languages).map((key) => [key, meta.languages[key]]);
-  // @ts-ignore
-  const defaultLanguage = usedLanguages.find((lang) => lang[1].default)[0] as string;
-
-  const messages = data.find((m) => m.locale === defaultLanguage)?.messages;
+  const messages = data.find((m) => m.locale === defaultLocale)?.messages;
 
   const keys = getObjectKeys(messages);
 
@@ -40,7 +31,7 @@ export default defineEventHandler(async () => {
     }
   }
 
-  return { languages, keys, defaultLanguage, missingKeys };
+  return { languages, keys, defaultLocale, missingKeys };
 });
 
 function getObjectKeys(obj: Record<string, any>, prefix: string = ''): string[] {
