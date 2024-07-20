@@ -25,7 +25,8 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "playground": "PLAYGROUND=true pnpm build && cd playground && NUXT_LOCALE_DIR_PATH=src/i18n pnpm run mundart"
+    "playground": "PLAYGROUND=true pnpm build && cd playground && NUXT_LOCALE_DIR_PATH=src/i18n pnpm run mundart",
+    "dist:publish": "pnpm build && cd dist && npm publish"
   },
   "dependencies": {
     "@nuxt/eslint": "0.3.13",
