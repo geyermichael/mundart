@@ -7,10 +7,8 @@ export default defineEventHandler(async (event) => {
   const fileName = body.country_code ? `${body.language_code}-${body.country_code}.json` : `${body.language_code}.json`;
 
   writeFile(`${process.cwd()}/${config.localeDirPath}/${fileName}`, {});
-  await $fetch('/api/v1/meta', {
-    method: 'PUT',
-    body: JSON.stringify(body),
-  });
+
+  await $fetch('/api/v1/sync-state');
 
   return setResponseStatus(event, 201);
 });
