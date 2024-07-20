@@ -7,7 +7,7 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
-    localeDirPath: process.env.NODE_ENV === 'development' ? 'dev/locales' : 'src/locales',
+    localeDirPath: process.env.NODE_ENV === 'development' ? '.dev/locales' : 'src/locales',
   },
 
   future: {

@@ -1,39 +1,29 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
-  const body = await readBody(event);
-  const { locales } = getLocales();
+  const { currentMeta, locales } = await readBody(event);
 
-  let currentMeta = await $fetch('/api/v1/meta', {
-    method: 'GET',
-  });
+  if (Object.keys(currentMeta).includes('generateBy')) {
+    handleFoundLocalesAndMetaLanguageMismatch();
+  } else {
+    const languageFileName = currentMeta.country_code
+      ? `${currentMeta.language_code}-${currentMeta.country_code}`
+      : currentMeta.language_code;
 
-  if (process.env.NODE_ENV === 'development') {
-    // check if request coming from "init-state" event, body should have "generateBy" key as it the current meta data
-    if (Object.keys(body).includes('generateBy')) {
-      handleFoundLocalesAndMetaLanguageMismatch();
-    } else {
-      // if (JSON.stringify(body.foundLocales) === JSON.stringify(locales)) {
-      //   return setResponseStatus(event, 304);
-      // } else {
-      const languageFileName = body.country_code ? `${body.language_code}-${body.country_code}` : body.language_code;
-
-      writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
-        generateBy: 'mundart',
-        generateAt: new Date().toISOString(),
-        foundLocales: locales,
-        languages: {
-          ...currentMeta.languages,
-          [languageFileName]: {
-            name: body.name,
-            language_code: body.language_code,
-            country_code: body.country_code,
-            default: body.default,
-          },
+    writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
+      generateBy: 'mundart',
+      generateAt: new Date().toISOString(),
+      foundLocales: locales,
+      languages: {
+        ...currentMeta.languages,
+        [languageFileName]: {
+          name: currentMeta.name,
+          language_code: currentMeta.language_code,
+          country_code: currentMeta.country_code,
+          default: currentMeta.default,
         },
-      });
-    }
+      },
+    });
   }
-  // }
 
   return setResponseStatus(event, 200);
 
@@ -48,7 +38,7 @@ export default defineEventHandler(async (event) => {
      * handle missing locale files
      */
     const missingLocaleFiles = Object.keys(currentMeta.languages).filter(
-      (loc: any) => !currentMeta.foundLocales.includes(loc),
+      (loc: any) => !currentMeta.foundLocales.includes(loc)
     );
 
     for (const loc of missingLocaleFiles) {
