@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "mundart": "node ./node_modules/mundart/server/index.mjs"
+    "mundart": "PORT=8123 NUXT_LOCALE_DIR_PATH=src/i18n node ./node_modules/mundart/server/index.mjs"
   },
   "dependencies": {
     "vue": "^3.4.29",
