@@ -5,7 +5,6 @@
       <UButton
         label="Add new"
         class="ml-auto"
-        disabled
         @click="isOpen = true"
       />
 
@@ -79,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useFetch('/api/v1/keys');
+const { data, refresh } = await useFetch('/api/v1/keys');
 
 const isOpen = ref(false);
 const state = reactive({
@@ -143,22 +142,22 @@ const filteredRows = computed(() => {
 });
 
 watchEffect(() => {
-  if (!data.value?.defaultLanguage) return;
+  if (!data.value?.defaultLocale) return;
 
   // generate columns data for all languages that are available
   const languageCols = data.value?.languages.map((lang) => {
     return {
       key: lang,
-      label: lang === data.value?.defaultLanguage ? `${lang} 👋` : lang,
+      label: lang === data.value?.defaultLocale ? `${lang} 👋` : lang,
     };
   });
 
   // sort key by default language first
   languageCols!.sort((a, b) => {
-    if (a.key === data.value?.defaultLanguage && b.key !== data.value?.defaultLanguage) {
+    if (a.key === data.value?.defaultLocale && b.key !== data.value?.defaultLocale) {
       return -1;
     }
-    if (a.key !== data.value?.defaultLanguage && b.key === data.value?.defaultLanguage) {
+    if (a.key !== data.value?.defaultLocale && b.key === data.value?.defaultLocale) {
       return 1;
     }
     return 0;
@@ -210,6 +209,12 @@ watchEffect(() => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSubmit = async (event: any) => {
-  console.log(event.data);
+  await $fetch('/api/v1/keys', {
+    method: 'POST',
+    body: JSON.stringify(event.data),
+  });
+  isOpen.value = false;
+  state.key = '';
+  await refresh();
 };
 </script>
