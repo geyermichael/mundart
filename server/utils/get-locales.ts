@@ -1,11 +1,10 @@
-import fs from 'fs';
+import { readdirSync } from 'fs';
 
 export function getLocales() {
   const config = useRuntimeConfig();
 
-  let files = [];
-
-  files = fs.readdirSync(`${process.cwd()}/${config.localeDirPath}`);
+  let files: string[] = [];
+  files = readdirSync(`${process.cwd()}/${config.localeDirPath}`);
 
   // remove file extension .json and skip ".meta.json" file or any other file starting with "."
   const usedLocales = files.map((file) => {
@@ -20,3 +19,4 @@ export function getLocales() {
     locales: usedLocales.filter((locale) => locale !== ''), // remove empty array elements
   };
 }
+// }
