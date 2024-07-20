@@ -19,4 +19,3 @@ export function getLocales() {
     locales: usedLocales.filter((locale) => locale !== ''), // remove empty array elements
   };
 }
-// }
