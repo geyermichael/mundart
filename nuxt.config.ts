@@ -1,7 +1,5 @@
-import fs from 'fs';
-import { name, version, description, author, license, repository, keywords } from './package.json';
+import createPackageInformation from './scripts/create-package-informatin';
 
-// https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: true },
@@ -20,7 +18,7 @@ export default defineNuxtConfig({
     },
     hooks: {
       close: () => {
-        generatePackageJson();
+        createPackageInformation();
       },
     },
   },
@@ -31,20 +29,3 @@ export default defineNuxtConfig({
     preference: 'light',
   },
 });
-
-function generatePackageJson() {
-  const packageJson = {
-    name,
-    version,
-    description,
-    main: 'server/index.mjs',
-    keywords,
-    author,
-    repository,
-    license,
-  };
-
-  fs.writeFileSync(`${process.cwd()}/dist/package.json`, JSON.stringify(packageJson, null, 2));
-
-  console.log('Generated package.json');
-}
