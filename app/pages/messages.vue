@@ -22,13 +22,11 @@
         >
           <template #key-data="{ row }">
             <div
-              class="flex items-center"
+              class="flex items-center hover:cursor-pointer hover:font-bold"
               :class="choosenKey === row.key ? 'font-bold' : ''"
+              @click="showContent(row.key)"
             >
-              <span
-                class="text-sm hover:cursor-pointer"
-                @click="showContent(row.key)"
-              >
+              <span class="text-sm">
                 {{ row.key }}
               </span>
             </div>
@@ -61,6 +59,8 @@
                   label="Save"
                   type="submit"
                   variant="ghost"
+                  :disabled="message.message === message.currentMessage"
+                  :class="message.message === message.currentMessage ? 'text-gray-400' : 'text-primary'"
                 />
               </div>
 
@@ -107,18 +107,30 @@ const filteredRows = computed(() => {
   });
 });
 
-const messages = ref<{ locale: string; message: string }[]>();
+const messages = ref();
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const showContent = async (key: any) => {
   choosenKey.value = key;
 
-  const response = (await $fetch(`/api/v1/messages/${key}`)) as { messages: { locale: string; message: string }[] };
+  const response = await $fetch(`/api/v1/messages/${key}`);
   messages.value = response.messages;
+
+  const helper = [];
+
+  for (const message of messages.value) {
+    helper.push({
+      locale: message.locale,
+      message: message.message,
+      currentMessage: message.message,
+    });
+  }
+
+  messages.value = helper;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSubmit = async (event: any) => {
-  await $fetch(`/api/v1/messages/${choosenKey.value}`, {
+  const response = await $fetch(`/api/v1/messages/${choosenKey.value}`, {
     method: 'PUT',
     body: JSON.stringify({
       locale: event.data.locale,
@@ -126,7 +138,9 @@ const onSubmit = async (event: any) => {
     }),
   });
 
-  await refresh();
-  showContent(choosenKey.value);
+  if (response.success) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    messages.value.find((message: any) => message.locale === event.data.locale).currentMessage = event.data.message;
+  }
 };
 </script>
