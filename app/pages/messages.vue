@@ -5,10 +5,10 @@
     </div>
     <div
       v-if="data?.defaultLocale"
-      class="flex flex-col grid grid-cols-10 gap-8"
+      class="flex flex-col grid grid-cols-12"
     >
-      <div class="col-span-3">
-        <div class="px-3 border-r">
+      <div class="col-span-4">
+        <div class="px-3 divide-y divide-gray-200 h-[3rem] border-r">
           <UInput
             v-model="q"
             placeholder="Search for keys..."
@@ -18,6 +18,7 @@
           :rows="filteredRows"
           :columns="[{ key: 'key', label: '' }]"
           class="border-r max-h-[80vh] overflow-hidden overflow-y-scroll"
+          :ui="{ thead: 'hidden' }"
         >
           <template #key-data="{ row }">
             <div
@@ -36,9 +37,9 @@
       </div>
       <div
         v-if="choosenKey"
-        class="col-span-6"
+        class="col-span-8 max-h-[80vh] overflow-hidden overflow-y-scroll"
       >
-        <div class="font-bold">
+        <div class="font-bold sticky top-0 bg-white z-10 h-[3.05rem] pl-6 pt-1 border-b border-gray-200">
           {{ choosenKey }}
         </div>
         <div>
