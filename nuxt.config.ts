@@ -25,7 +25,6 @@ export default defineNuxtConfig({
   },
 
   modules: [
-    '@nuxt/ui',
     '@nuxt/eslint',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
@@ -34,10 +33,6 @@ export default defineNuxtConfig({
       });
     },
   ],
-
-  colorMode: {
-    preference: 'light',
-  },
 
   build: {
     transpile: ['vuetify'],
