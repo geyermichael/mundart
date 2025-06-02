@@ -4,7 +4,8 @@
       :items="keys"
       :headers="headers"
       :search="search"
-      style="max-height: 80dvh"
+      fixed-header
+      style="max-height: 90dvh"
       class="overflow-y-auto"
     >
       <template #top>
@@ -40,12 +41,12 @@
         </v-toolbar>
       </template>
 
-      <template #[`item.actions`]>
+      <template #[`item.actions`]="{ item }">
         <v-btn
           v-for="action in actions"
           :key="action.label"
           :icon="action.icon"
-          @click="action.click()"
+          @click="action.click(item)"
         />
       </template>
     </v-data-table>
@@ -95,13 +96,23 @@ const dialog = ref(false);
 
 const isEditing = ref(false);
 
+const router = useRouter();
+
 const actions = [
+  {
+    label: 'Translate',
+    icon: 'mdi-translate',
+    click: (item) =>
+      router.push({
+        name: 'translations',
+        query: { key: item.key },
+      }),
+  },
   {
     label: 'Edit',
     icon: 'mdi-pencil',
     click: () => alert('Editing is not implemented yet'),
   },
-
   {
     label: 'Delete',
     icon: 'mdi-delete',

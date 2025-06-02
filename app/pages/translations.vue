@@ -79,7 +79,10 @@
           v-for="message in messages"
           :key="message.locale"
         >
-          <v-form @submit.prevent="onSubmit(message)">
+          <v-form
+            @submit.prevent="onSubmit(message)"
+            @keydown.enter.shift.exact.prevent="message.message !== message.currentMessage && onSubmit(message)"
+          >
             <v-card-title class="d-flex align-center justify-space-between">
               <div>
                 <v-icon
@@ -114,6 +117,9 @@
 </template>
 
 <script setup lang="ts">
+const router = useRouter();
+const route = useRoute();
+
 const { data, refresh } = await useFetch('/api/v1/keys');
 
 // create an array of objects using data.keys. Objects should look like { key: arrayElement }
@@ -170,8 +176,16 @@ const onSubmit = async (event: any) => {
 
 onMounted(() => {
   if (data.value?.keys) {
-    selectedKey.value = data.value.keys[0] || '';
+    if (route.query.key && data.value.keys.includes(route.query.key as string)) {
+      selectedKey.value = route.query.key as string;
+    } else {
+      selectedKey.value = data.value.keys[0] || '';
+    }
     showContent(selectedKey.value);
+
+    router.replace({
+      query: {},
+    });
   }
 });
 </script>

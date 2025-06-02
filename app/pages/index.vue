@@ -3,7 +3,9 @@
     <v-data-table
       :items="languages"
       :headers="headers"
-      style="max-height: 80dvh"
+      fixed-header
+      style="max-height: 90dvh"
+      class="overflow-y-auto"
     >
       <template #top>
         <v-toolbar flat>
