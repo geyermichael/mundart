@@ -18,9 +18,9 @@
             </v-btn>
             <v-btn
               flat
-              to="/messages"
+              to="/translations"
             >
-              Messages
+              Translations
             </v-btn>
           </div>
         </template>
