@@ -2,15 +2,12 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   const { locales } = await readBody(event);
 
-  writeFile(
-    `${process.cwd()}/${config.localeDirPath}/.meta.json`,
-    JSON.stringify({
-      generateBy: 'mundart',
-      generateAt: new Date().toISOString(),
-      foundLocales: locales,
-      languages: createMetaData(locales),
-    })
-  );
+  writeFile(`${process.cwd()}/${config.localeDirPath}/.meta.json`, {
+    generateBy: 'mundart',
+    generateAt: new Date().toISOString(),
+    foundLocales: locales,
+    languages: createMetaData(locales),
+  });
 
   return setResponseStatus(event, 201);
 });
