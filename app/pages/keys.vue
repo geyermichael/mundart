@@ -5,6 +5,8 @@
       :headers="headers"
       :search="search"
       fixed-header
+      :items-per-page="-1"
+      hide-default-footer
       style="max-height: 90dvh"
       class="overflow-y-auto"
     >
@@ -39,6 +41,15 @@
             />
           </div>
         </v-toolbar>
+      </template>
+
+      <template #[`item.key`]="{ item }">
+        <div
+          style="cursor: pointer; width: 40ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
+          @click="router.push({ name: 'translations', query: { key: item.key } })"
+        >
+          {{ item.key }}
+        </div>
       </template>
 
       <template #[`item.actions`]="{ item }">
@@ -102,7 +113,7 @@ const actions = [
   {
     label: 'Translate',
     icon: 'mdi-translate',
-    click: (item) =>
+    click: (item: { key: string }) =>
       router.push({
         name: 'translations',
         query: { key: item.key },

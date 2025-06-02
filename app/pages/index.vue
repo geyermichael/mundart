@@ -4,6 +4,8 @@
       :items="languages"
       :headers="headers"
       fixed-header
+      :items-per-page="-1"
+      hide-default-footer
       style="max-height: 90dvh"
       class="overflow-y-auto"
     >

@@ -26,6 +26,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/eslint',
+    '@vueuse/nuxt',
     (_options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => {
         // @ts-expect-error config.plugins is not defined in the type

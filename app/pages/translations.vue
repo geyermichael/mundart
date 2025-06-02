@@ -1,6 +1,6 @@
 <template>
   <v-row no-gutters>
-    <v-col cols="6">
+    <v-col cols="4">
       <v-data-table
         :items="keys"
         :search="search"
@@ -38,13 +38,30 @@
         </template>
 
         <template #[`item.key`]="{ item }">
-          <span
-            style="cursor: pointer"
+          <v-tooltip
+            v-if="item.key.length > 40"
+            :text="item.key"
+            location="bottom"
+          >
+            <template #activator="{ props }">
+              <div
+                v-bind="props"
+                style="cursor: pointer; width: 40ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
+                :class="selectedKey === item.key ? 'font-weight-bold text-primary' : ''"
+                @click="showContent(item.key)"
+              >
+                {{ item.key }}
+              </div>
+            </template>
+          </v-tooltip>
+          <div
+            v-else
+            style="cursor: pointer; width: 40ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis"
             :class="selectedKey === item.key ? 'font-weight-bold text-primary' : ''"
             @click="showContent(item.key)"
           >
             {{ item.key }}
-          </span>
+          </div>
         </template>
         <template #[`item.progress`]="{ item }">
           <v-progress-circular
@@ -57,9 +74,9 @@
     </v-col>
     <v-col
       v-if="selectedKey"
-      cols="6"
+      cols="8"
     >
-      <v-toolbar>
+      <v-toolbar class="px-6">
         <v-toolbar-title>
           <v-icon
             color="medium-emphasis"
@@ -69,6 +86,21 @@
 
           {{ selectedKey }}
         </v-toolbar-title>
+
+        <template #prepend>
+          <v-icon
+            v-if="!copied"
+            icon="mdi-content-copy"
+            :size="16"
+            @click="copy(selectedKey)"
+          />
+          <v-icon
+            v-else
+            icon="mdi-check"
+            :size="16"
+            color="success"
+          />
+        </template>
       </v-toolbar>
 
       <v-container
@@ -128,6 +160,8 @@ const keys = computed(() => {
   if (!keys) return [];
   return keys.map((key) => ({ key: key.key, progress: key.progress }));
 });
+
+const { copy, copied } = useClipboard();
 
 const selectedKey = ref('');
 
