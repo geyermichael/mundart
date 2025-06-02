@@ -66,32 +66,41 @@
       v-model="dialog"
       max-width="500"
     >
-      <v-card :title="`${isEditing ? 'Edit' : 'Add'} a language`">
-        <template #text>
-          <v-text-field
-            v-model="state.key"
-            variant="outlined"
-            label="Key"
-          />
-        </template>
+      <v-form
+        v-model="isFormValid"
+        @submit.prevent="submit"
+      >
+        <v-card :title="`${isEditing ? 'Edit' : 'Add'} a language`">
+          <template #text>
+            <v-text-field
+              v-model="state.key"
+              variant="outlined"
+              label="Key"
+              :rules="[rules.required, rules.noSpaces, rules.noSpecialChars]"
+              placeholder="Add your key here"
+            />
+          </template>
 
-        <v-divider />
+          <v-divider />
 
-        <v-card-actions class="bg-surface-light">
-          <v-btn
-            text="Cancel"
-            variant="plain"
-            @click="dialog = false"
-          />
+          <v-card-actions class="bg-surface-light">
+            <v-btn
+              text="Cancel"
+              variant="plain"
+              @click="dialog = false"
+            />
 
-          <v-spacer />
+            <v-spacer />
 
-          <v-btn
-            text="Save"
-            @click="submit"
-          />
-        </v-card-actions>
-      </v-card>
+            <v-btn
+              text="Save"
+              variant="plain"
+              type="submit"
+              :disabled="!isFormValid"
+            />
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
   </div>
 </template>
@@ -102,6 +111,15 @@ const { data, refresh } = await useFetch('/api/v1/keys');
 const state = ref({
   key: '',
 });
+
+const isFormValid = ref();
+
+const rules = {
+  required: (value: string) => !!value || 'Key is required',
+  noSpaces: (value: string) => !/\s/.test(value) || 'Key cannot contain spaces',
+  noSpecialChars: (value: string) =>
+    /^[a-zA-Z0-9_.]+$/.test(value) || 'Key can only contain letters, numbers, dots, and underscores',
+};
 
 const dialog = ref(false);
 
