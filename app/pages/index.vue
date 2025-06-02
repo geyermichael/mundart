@@ -11,7 +11,6 @@
               color="medium-emphasis"
               icon="mdi-web"
               size="x-small"
-              start
             />
 
             Languages

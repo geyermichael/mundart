@@ -1,145 +1,127 @@
 <template>
   <div>
-    <div class="flex justify-center mb-4">
-      <div class="text-xl">Keys</div>
-      <UButton
-        label="Add new"
-        class="ml-auto"
-        @click="isOpen = true"
-      />
-
-      <UModal v-model="isOpen">
-        <div class="p-4">
-          <UForm
-            :state="state"
-            class="space-y-4"
-            @submit="onSubmit"
-          >
-            <UFormGroup
-              class="py-2"
-              label="Key"
-            >
-              <UInput
-                v-model="state.key"
-                placeholder="foo.bar"
-              />
-            </UFormGroup>
-
-            <UButton
-              label="Add"
-              class="mt-4"
-              type="submit"
+    <v-data-table
+      :items="keys"
+      :headers="headers"
+      :search="search"
+    >
+      <template #top>
+        <v-toolbar flat>
+          <v-toolbar-title>
+            <v-icon
+              color="medium-emphasis"
+              icon="mdi-key"
+              size="x-small"
             />
-          </UForm>
-        </div>
-      </UModal>
-    </div>
 
-    <div v-if="data?.defaultLocale">
-      <div class="flex px-3 py-3.5 border-b border-gray-200 dark:border-gray-700">
-        <UInput
-          v-model="q"
-          placeholder="Search for keys..."
-        />
-      </div>
+            Keys
+          </v-toolbar-title>
 
-      <UTable
-        :rows="rows"
-        :columns="columns"
-      >
-        <template #empty-state>
-          <div class="flex flex-col items-center justify-center py-6 gap-3">
-            <span class="italic text-sm">No keys found!</span>
+          <div class="d-flex justify-end flex-grow-1 align-center">
+            <v-text-field
+              v-model="search"
+              label="Search"
+              prepend-inner-icon="mdi-magnify"
+              variant="outlined"
+              hide-details
+              single-line
+              density="compact"
+              class="w-50"
+            />
+            <v-btn
+              class="me-2"
+              prepend-icon="mdi-plus"
+              text="Add a key"
+              @click="dialog = true"
+            />
           </div>
+        </v-toolbar>
+      </template>
+
+      <template #[`item.actions`]>
+        <v-btn
+          v-for="action in actions"
+          :key="action.label"
+          :icon="action.icon"
+          @click="action.click()"
+        />
+      </template>
+    </v-data-table>
+
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card :title="`${isEditing ? 'Edit' : 'Add'} a language`">
+        <template #text>
+          <v-text-field
+            v-model="state.key"
+            variant="outlined"
+            label="Key"
+          />
         </template>
 
-        <template #actions-data="{ row }">
-          <UDropdown :items="items(row)">
-            <UButton
-              color="gray"
-              variant="ghost"
-              icon="i-heroicons-ellipsis-horizontal-20-solid"
-            />
-          </UDropdown>
-        </template>
-      </UTable>
-      <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-        <UPagination
-          v-model="page"
-          :page-count="pageCount"
-          :total="keys.length"
-        />
-      </div>
-    </div>
-    <div v-else>
-      <NoDefaulLocale />
-    </div>
+        <v-divider />
+
+        <v-card-actions class="bg-surface-light">
+          <v-btn
+            text="Cancel"
+            variant="plain"
+            @click="dialog = false"
+          />
+
+          <v-spacer />
+
+          <v-btn
+            text="Save"
+            @click="submit"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 const { data, refresh } = await useFetch('/api/v1/keys');
 
-const isOpen = ref(false);
-const state = reactive({
+const state = ref({
   key: '',
 });
 
-const page = ref(1);
-const pageCount = 10;
+const dialog = ref(false);
 
-const rows = computed(() => {
-  if (q.value) {
-    return filteredRows.value.slice((page.value - 1) * pageCount, page.value * pageCount);
-  } else {
-    return keys.slice((page.value - 1) * pageCount, page.value * pageCount);
-  }
-});
+const isEditing = ref(false);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const items = (row: any) => [
-  [
-    {
-      label: 'Edit',
-      icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => console.log('Edit', row.id),
-    },
-    {
-      label: 'Duplicate',
-      icon: 'i-heroicons-document-duplicate-20-solid',
-    },
-  ],
-  [
-    {
-      label: 'Delete',
-      icon: 'i-heroicons-trash-20-solid',
-    },
-  ],
+const actions = [
+  {
+    label: 'Edit',
+    icon: 'mdi-pencil',
+    click: () => alert('Editing is not implemented yet'),
+  },
+
+  {
+    label: 'Delete',
+    icon: 'mdi-delete',
+    click: () => alert('Editing is not implemented yet'),
+  },
 ];
 
-const columns: {
+interface Headers {
   key: string;
-  label: string;
+  title: string;
   sortable?: boolean;
-}[] = reactive([]);
+}
 
-const keys: {
+const headers = ref<Headers[]>([]);
+
+interface Key {
   key: string;
-}[] = reactive([]);
+}
 
-const q = ref('');
+const keys = ref<Key[]>([]);
 
-const filteredRows = computed(() => {
-  if (!q.value) {
-    return keys;
-  }
-
-  return keys.filter((key) => {
-    return Object.values(key).some((value) => {
-      return String(value).toLowerCase().includes(q.value.toLowerCase());
-    });
-  });
-});
+const search = ref('');
 
 watchEffect(() => {
   if (!data.value?.defaultLocale) return;
@@ -148,7 +130,7 @@ watchEffect(() => {
   const languageCols = data.value?.languages.map((lang) => {
     return {
       key: lang,
-      label: lang === data.value?.defaultLocale ? `${lang} 👋` : lang,
+      title: lang === data.value?.defaultLocale ? `${lang} 👋` : lang,
     };
   });
 
@@ -164,17 +146,17 @@ watchEffect(() => {
   });
 
   // set table columns
-  columns.splice(0, columns.length); // Clear the array
-  columns.push(
+  headers.value.splice(0, headers.value.length); // Clear the array
+  headers.value.push(
     {
       key: 'key',
-      label: 'Key',
+      title: 'Key',
       sortable: true,
     },
     ...languageCols!,
     {
       key: 'actions',
-      label: '',
+      title: '',
     }
   );
 
@@ -198,23 +180,22 @@ watchEffect(() => {
     return res;
   };
 
-  keys.splice(0, keys.length); // Clear the array
+  keys.value.splice(0, keys.value.length); // Clear the array
   data.value?.keys.forEach((item) => {
-    keys.push({
+    keys.value.push({
       key: item,
       ...setLanguageColumnValues(item),
     });
   });
 });
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const onSubmit = async (event: any) => {
+const submit = async () => {
   await $fetch('/api/v1/keys', {
     method: 'POST',
-    body: JSON.stringify(event.data),
+    body: state.value,
   });
-  isOpen.value = false;
-  state.key = '';
+  dialog.value = false;
+  state.value.key = '';
   await refresh();
 };
 </script>
