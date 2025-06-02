@@ -31,7 +31,17 @@ export default defineEventHandler(async () => {
     }
   }
 
-  return { languages, keys, defaultLocale, missingKeys };
+  const keysWithProgress = [];
+
+  for (const key of keys) {
+    const progress = await getProgressOfTranslation(key);
+    keysWithProgress.push({
+      key,
+      progress,
+    });
+  }
+
+  return { languages, keys, defaultLocale, missingKeys, keysWithProgress };
 });
 
 function getObjectKeys(obj: Record<string, any>, prefix: string = ''): string[] {
@@ -64,4 +74,20 @@ function hasNestedKey(obj: Record<string, any>, keyPath: string): boolean {
   }
 
   return true;
+}
+
+async function getProgressOfTranslation(key: string) {
+  if (!key) return;
+
+  const response = await $fetch(`/api/v1/messages/${key}`);
+
+  const alreadyTranslated = response.messages.filter((m: any) => m.message).length;
+  const totalMessages = response.messages.length;
+  const progress = (alreadyTranslated / totalMessages) * 100;
+
+  if (isNaN(progress)) {
+    return 0;
+  } else {
+    return progress.toFixed(0);
+  }
 }

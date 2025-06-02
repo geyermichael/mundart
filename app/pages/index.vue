@@ -3,6 +3,7 @@
     <v-data-table
       :items="languages"
       :headers="headers"
+      style="max-height: 80dvh"
     >
       <template #top>
         <v-toolbar flat>

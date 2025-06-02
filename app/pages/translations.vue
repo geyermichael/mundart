@@ -8,7 +8,7 @@
         hide-default-footer
         hide-default-header
         style="height: 80dvh"
-        class="overflow-y-auto pb-24 mb-24"
+        class="overflow-y-auto"
       >
         <template #top>
           <v-toolbar flat>
@@ -46,6 +46,13 @@
             {{ item.key }}
           </span>
         </template>
+        <template #[`item.progress`]="{ item }">
+          <v-progress-circular
+            :model-value="item.progress"
+            :color="item.progress == 100 ? 'success' : 'primary'"
+            :size="24"
+          />
+        </template>
       </v-data-table>
     </v-col>
     <v-col
@@ -66,7 +73,7 @@
 
       <v-container
         style="height: 80dvh"
-        class="overflow-y-auto pb-24 mb-24"
+        class="overflow-y-auto"
       >
         <v-card
           v-for="message in messages"
@@ -107,13 +114,13 @@
 </template>
 
 <script setup lang="ts">
-const { data } = await useFetch('/api/v1/keys');
+const { data, refresh } = await useFetch('/api/v1/keys');
 
 // create an array of objects using data.keys. Objects should look like { key: arrayElement }
 const keys = computed(() => {
-  const keys = data.value?.keys;
+  const keys = data.value?.keysWithProgress;
   if (!keys) return [];
-  return keys.map((key) => ({ key }));
+  return keys.map((key) => ({ key: key.key, progress: key.progress }));
 });
 
 const selectedKey = ref('');
@@ -157,6 +164,8 @@ const onSubmit = async (event: any) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     messages.value.find((message: any) => message.locale === event.locale).currentMessage = event.message;
   }
+
+  await refresh();
 };
 
 onMounted(() => {

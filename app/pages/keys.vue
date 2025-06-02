@@ -4,6 +4,8 @@
       :items="keys"
       :headers="headers"
       :search="search"
+      style="max-height: 80dvh"
+      class="overflow-y-auto"
     >
       <template #top>
         <v-toolbar flat>
