@@ -1,7 +1,10 @@
 {
   "generateBy": "mundart",
-  "generateAt": "2024-07-07T11:44:36.663Z",
-  "foundLocales": ["de", "en"],
+  "generateAt": "2025-06-02T20:38:47.284Z",
+  "foundLocales": [
+    "de",
+    "en"
+  ],
   "languages": {
     "de": {
       "name": "",

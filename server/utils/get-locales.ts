@@ -9,6 +9,15 @@ export function getLocales() {
   // check if .meta.json file exists
   const metaFile = files.find((file) => file === '.meta.json');
 
+  if (!metaFile) {
+    // if no meta file, return empty object
+    return {
+      hasMeta: false,
+      locales: [],
+      defaultLocale: undefined,
+    };
+  }
+
   // remove file extension .json and skip ".meta.json" file or any other file starting with "."
   const usedLocales = files.map((file) => {
     return file.split('.')[0];

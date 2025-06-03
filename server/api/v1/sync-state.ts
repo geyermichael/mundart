@@ -3,6 +3,7 @@ export default defineEventHandler(async (event) => {
 
   if (!hasMeta) {
     createMetaFile(locales);
+    console.log('Meta file created with locales:', locales);
   } else {
     const currentMeta = await $fetch('/api/v1/meta', {
       method: 'GET',

@@ -1,178 +1,177 @@
 <template>
   <div>
-    <div class="flex justify-center mb-4">
-      <div class="text-xl">Languages</div>
-      <UButton
-        label="Add new"
-        class="ml-auto"
-        @click="isOpen = true"
-      />
-
-      <UModal v-model="isOpen">
-        <div class="p-4">
-          <UForm
-            :state="state"
-            class="space-y-4"
-            @submit="onSubmit"
-          >
-            <UFormGroup
-              class="py-2"
-              label="Name"
-            >
-              <UInput
-                v-model="state.name"
-                placeholder="Germany"
-              />
-            </UFormGroup>
-            <UFormGroup
-              class="py-2"
-              label="Country Code"
-            >
-              <UInput
-                v-model="state.country_code"
-                placeholder="DE"
-              />
-            </UFormGroup>
-            <UFormGroup
-              class="py-2"
-              label="Language Code"
-            >
-              <UInput
-                v-model="state.language_code"
-                placeholder="de"
-                required
-              />
-            </UFormGroup>
-            <UFormGroup label="Default">
-              <UCheckbox
-                v-model="state.default"
-                :disabled="hasAlredyDefaultLocale"
-              />
-            </UFormGroup>
-
-            <UButton
-              label="Add"
-              class="mt-4"
-              type="submit"
-            />
-          </UForm>
-        </div>
-      </UModal>
-    </div>
-
-    <UTable
-      :rows="languages"
-      :columns="columns"
+    <v-data-table
+      :items="languages"
+      :headers="headers"
+      fixed-header
+      :items-per-page="-1"
+      hide-default-footer
+      style="max-height: 90dvh"
+      class="overflow-y-auto"
     >
-      <template #empty-state>
-        <div class="flex flex-col items-center justify-center py-6 gap-3">
-          <span class="italic text-sm">No one here!</span>
-          <UButton label="Add people" />
-        </div>
+      <template #top>
+        <v-toolbar flat>
+          <v-toolbar-title>
+            <v-icon
+              color="medium-emphasis"
+              icon="mdi-web"
+              size="x-small"
+            />
+
+            Languages
+          </v-toolbar-title>
+
+          <v-btn
+            class="me-2"
+            prepend-icon="mdi-plus"
+            text="Add a language"
+            @click="dialog = true"
+          />
+        </v-toolbar>
       </template>
 
-      <template #actions-data="{ row }">
-        <UDropdown :items="items(row)">
-          <UButton
-            color="gray"
-            variant="ghost"
-            icon="i-heroicons-ellipsis-horizontal-20-solid"
-          />
-        </UDropdown>
+      <template #[`item.actions`]>
+        <v-btn
+          v-for="action in actions"
+          :key="action.label"
+          :icon="action.icon"
+          @click="action.click()"
+        />
       </template>
-    </UTable>
+    </v-data-table>
+
+    <v-dialog
+      v-model="dialog"
+      max-width="500"
+    >
+      <v-card :title="`${isEditing ? 'Edit' : 'Add'} a language`">
+        <template #text>
+          <v-text-field
+            v-model="state.country_code"
+            variant="outlined"
+            label="Country Code"
+          />
+          <v-text-field
+            v-model="state.language_code"
+            variant="outlined"
+            label="Language Code"
+          />
+          <v-text-field
+            v-model="state.name"
+            variant="outlined"
+            label="Name (optional)"
+          />
+          <v-checkbox
+            v-if="!hasDefaultLocale"
+            v-model="state.default"
+            label="Set as default language"
+            :disabled="isEditing && !hasDefaultLocale"
+          />
+        </template>
+
+        <v-divider />
+
+        <v-card-actions class="bg-surface-light">
+          <v-btn
+            text="Cancel"
+            variant="plain"
+            @click="dialog = false"
+          />
+
+          <v-spacer />
+
+          <v-btn
+            text="Save"
+            @click="submit"
+          />
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-const { data, refresh } = await useFetch('/api/v1/meta');
-const toast = useToast();
-
-const isOpen = ref(false);
-const hasAlredyDefaultLocale = ref(false);
-
-const columns = [
-  {
-    key: 'country_code',
-    label: 'Country code',
-  },
-  {
-    key: 'language_code',
-    label: 'Language code',
-  },
-  {
-    key: 'name',
-    label: 'Name',
-  },
-  {
-    key: 'default',
-    label: 'Default',
-  },
-  {
-    key: 'actions',
-  },
-];
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const items = (row: any) => [
-  [
-    {
-      label: 'Edit',
-      icon: 'i-heroicons-pencil-square-20-solid',
-      click: () => console.log('Edit', row.id),
-    },
-    {
-      label: 'Duplicate',
-      icon: 'i-heroicons-document-duplicate-20-solid',
-    },
-  ],
-  [
-    {
-      label: 'Delete',
-      icon: 'i-heroicons-trash-20-solid',
-    },
-  ],
-];
-
-const languages: {
-  country_code: string;
-  language_code: string;
-  name: string;
-  default: 'Yes' | '';
-}[] = reactive([]);
-
-watchEffect(() => {
-  languages.splice(0, languages.length); // Clear the array
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Object.values(data.value.languages).forEach((lang: any) => {
-    languages.push({
+const { data: languages, refresh } = await useFetch('/api/v1/meta', {
+  transform: (response) => {
+    const tableData = Object.values(response.languages).map((lang) => ({
       country_code: lang.country_code ?? '-',
       language_code: lang.language_code,
       name: lang.name ?? '-',
       default: lang.default ? 'Yes' : '',
-    });
+    }));
 
-    if (lang.default) {
-      hasAlredyDefaultLocale.value = true;
-    }
-  });
+    return tableData;
+  },
 });
 
-const state = reactive({
-  name: '',
+const state = ref({
   country_code: '',
   language_code: '',
+  name: '',
   default: false,
 });
 
-const onSubmit = async () => {
+const dialog = ref(false);
+
+const isEditing = ref(false);
+
+const hasDefaultLocale = computed(() => {
+  return languages.value?.some((lang) => lang.default);
+});
+
+const headers = [
+  {
+    key: 'language_code',
+    title: 'Language code',
+  },
+  {
+    key: 'country_code',
+    title: 'Country code',
+  },
+  {
+    key: 'name',
+    title: 'Name',
+  },
+  {
+    key: 'default',
+    title: 'Default',
+  },
+  {
+    key: 'actions',
+    title: '',
+    sortable: false,
+  },
+];
+
+// // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const actions = [
+  {
+    label: 'Edit',
+    icon: 'mdi-pencil',
+    click: () => alert('Editing is not implemented yet'),
+  },
+  {
+    label: 'Delete',
+    icon: 'mdi-delete',
+    click: () => alert('Deleting is not implemented yet'),
+  },
+];
+
+const submit = async () => {
   await $fetch('/api/v1/locale', {
     method: 'POST',
-    body: JSON.stringify(state),
+    body: state.value,
   });
 
-  isOpen.value = false;
-  toast.add({ title: 'Language added!' });
+  dialog.value = false;
+  // toast.add({ title: 'Language added!' });
+  state.value = {
+    country_code: '',
+    language_code: '',
+    name: '',
+    default: false,
+  };
+
   await refresh();
 };
 </script>

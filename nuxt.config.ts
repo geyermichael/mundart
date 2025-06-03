@@ -1,3 +1,4 @@
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 import createPackageInformation from './scripts/create-package-informatin';
 
 export default defineNuxtConfig({
@@ -23,9 +24,26 @@ export default defineNuxtConfig({
     },
   },
 
-  modules: ['@nuxt/ui', '@nuxt/eslint'],
+  modules: [
+    '@nuxt/eslint',
+    '@vueuse/nuxt',
+    (_options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => {
+        // @ts-expect-error config.plugins is not defined in the type
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
+    },
+  ],
 
-  colorMode: {
-    preference: 'light',
+  build: {
+    transpile: ['vuetify'],
+  },
+
+  vite: {
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
+    },
   },
 });
