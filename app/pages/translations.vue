@@ -190,8 +190,6 @@ const showContent = async (key: any) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const onSubmit = async (event: any) => {
-  console.log('onSubmit', event);
-
   const response = await $fetch(`/api/v1/messages/${selectedKey.value}`, {
     method: 'PUT',
     body: {

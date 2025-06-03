@@ -158,7 +158,6 @@ const actions = [
 ];
 
 const submit = async () => {
-  console.log('Submitting', state.value);
   await $fetch('/api/v1/locale', {
     method: 'POST',
     body: state.value,
