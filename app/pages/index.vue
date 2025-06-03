@@ -62,10 +62,10 @@
             label="Name (optional)"
           />
           <v-checkbox
-            v-if="!hasAlredyDefaultLocale"
+            v-if="!hasDefaultLocale"
             v-model="state.default"
             label="Set as default language"
-            :disabled="isEditing && !hasAlredyDefaultLocale"
+            :disabled="isEditing && !hasDefaultLocale"
           />
         </template>
 
@@ -115,7 +115,7 @@ const dialog = ref(false);
 
 const isEditing = ref(false);
 
-const hasAlredyDefaultLocale = computed(() => {
+const hasDefaultLocale = computed(() => {
   return languages.value?.some((lang) => lang.default);
 });
 
