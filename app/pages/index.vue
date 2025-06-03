@@ -121,12 +121,12 @@ const hasDefaultLocale = computed(() => {
 
 const headers = [
   {
-    key: 'country_code',
-    title: 'Country code',
-  },
-  {
     key: 'language_code',
     title: 'Language code',
+  },
+  {
+    key: 'country_code',
+    title: 'Country code',
   },
   {
     key: 'name',
